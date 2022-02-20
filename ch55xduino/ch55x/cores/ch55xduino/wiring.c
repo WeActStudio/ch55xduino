@@ -679,6 +679,14 @@ void init()
     SAFE_MOD = 0xAA;
     
 #if defined(CH551) || defined(CH552)
+
+#if OSC_EN_XT
+    CLOCK_CFG |= bOSC_EN_XT;
+    CLOCK_CFG &= ~bOSC_EN_INT;
+	SAFE_MOD = 0x55;
+	SAFE_MOD = 0xAA;
+#endif	
+
 #if F_CPU == 32000000
     CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x07;  // 32MHz
 #elif F_CPU == 24000000

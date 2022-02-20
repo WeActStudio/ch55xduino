@@ -2,13 +2,41 @@
     "packages": [
         {
             "name": "CH55xDuino",
-            "maintainer": "Deqing Sun",
-            "websiteURL": "https://github.com/DeqingSun/ch55xduino",
-            "email": "ds@thinkcreate.us ",
+            "maintainer": "WeAct Studio",
+            "websiteURL": "https://github.com/WeActTC/ch55xduino",
+            "email": "",
             "help": {
-                "online": "https://github.com/DeqingSun/ch55xduino"
+                "online": "https://github.com/WeActTC/ch55xduino"
             },
             "platforms" : [
+                {
+                    "name": "CH55xDuino MCS51 plain C core (non-C++)",
+                    "architecture": "mcs51",
+                    "version": "0.0.9-WeActStudio",
+                    "category": "Contributed",
+                    "boards": [
+                        {"name": "CH552 Board"},
+                        {"name": "CH551 Board"},
+                        {"name": "CH559 Board"},
+                        {"name": "CH549 (experimental)"}
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "name": "MCS51Tools",
+                            "version": "2020.12.01",
+                            "packager": "CH55xDuino"
+                        },
+                        {
+                            "name": "sdcc",
+                            "version": "build.11630",
+                            "packager": "CH55xDuino"
+                        }
+                    ],
+                    "url": "https://github.com/WeActTC/ch55xduino/releases/download/0.0.9-WeActStudio/ch55xduino-core-0.0.9-weactstudio.tar.bz2",
+                    "archiveFileName": "ch55xduino-core-0.0.9-weactstudio.tar.bz2",
+                    "checksum": "SHA-256:8b025acafe4ffdc8d5117e3f180c8ed2eb770579d2edf6ea981ffaec2a4048f8",
+                    "size": "110918"
+                },
                 {
                     "name": "CH55xDuino MCS51 plain C core (non-C++)",
                     "architecture": "mcs51",
