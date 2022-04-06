@@ -40,34 +40,6 @@
                 {
                     "name": "CH55xDuino MCS51 plain C core (non-C++)",
                     "architecture": "mcs51",
-                    "version": "0.0.9",
-                    "category": "Contributed",
-                    "boards": [
-                        {"name": "CH552 Board"},
-                        {"name": "CH551 Board"},
-                        {"name": "CH559 Board"},
-                        {"name": "CH549 (experimental)"}
-                    ],
-                    "toolsDependencies": [
-                        {
-                            "name": "MCS51Tools",
-                            "version": "2020.12.01",
-                            "packager": "CH55xDuino"
-                        },
-                        {
-                            "name": "sdcc",
-                            "version": "build.11630",
-                            "packager": "CH55xDuino"
-                        }
-                    ],
-                    "url": "https://github.com/DeqingSun/ch55xduino/releases/download/0.0.9/ch55xduino-core-0.0.9.tar.bz2",
-                    "archiveFileName": "ch55xduino-core-0.0.9.tar.bz2",
-                    "checksum": "SHA-256:f7e604836d87ab482bafb24ac5bbc34ae0c5a01e12fe3051a3954b03198c5bae",
-                    "size": "116503"
-                },
-                {
-                    "name": "CH55xDuino MCS51 plain C core (non-C++)",
-                    "architecture": "mcs51",
                     "version": "0.0.8",
                     "category": "Contributed",
                     "boards": [
