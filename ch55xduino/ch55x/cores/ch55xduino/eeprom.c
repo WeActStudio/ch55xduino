@@ -1,3 +1,7 @@
+/*
+ created by Deqing Sun for use with CH55xduino
+ */
+
 #include <stdint.h>
 #include "include/ch5xx.h"
 #include "include/ch5xx_usb.h"
@@ -29,6 +33,7 @@ void eeprom_write_byte_2_params_DPTR (uint16_t addr_val){
     SAFE_MOD = 0;                                                              //Exit Safe mode
     
 #else
+    addr_val;   //TBD
     return;
 #endif
 }
@@ -41,6 +46,7 @@ uint8_t eeprom_read_byte (uint8_t addr){
     ROM_CTRL = ROM_CMD_READ;
     return ROM_DATA_L;
 #else
+    addr;   //TBD
     return 0;
 #endif
 }

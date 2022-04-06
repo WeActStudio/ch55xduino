@@ -53,6 +53,8 @@ If you want to leave the bootloader, you may send the following bytes at 57600 b
 
 ### Driver for windows
 
+Added 2022/03/31, Please note, you can either following the Zadig instructions, or you can replace the tools in ```C:\Users\YOUR USER NAME\AppData\Local\Arduino15\packages\CH55xDuino\tools\MCS51Tools\2020.12.01\win``` with [this one](https://github.com/DeqingSun/ch55xduino/files/8390855/vnproch551_exe_20220331.zip). The newly compiled tool can use the default CH375 driver and co-exist with the offical WCHISPTool. Also it workes with 2.5.0 version of bootloader. The newly compiled tool will be de default tool in the next release.
+
 ![Zadig image](https://raw.githubusercontent.com/DeqingSun/ch55xduino/ch55xduino/docs/Zadig_bootloader_libusb.png)
 
 [Zadig](https://zadig.akeo.ie/) is the recommended tool to install drivers in Windows. The bootloader (4348,55E0) should be installed with libusb-win32 driver (WinUSB driver may not work on some computer). 

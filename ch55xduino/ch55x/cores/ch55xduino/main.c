@@ -20,7 +20,9 @@
 #include <Arduino.h>
 
 // make sure to define prototypes for all used interrupts
-void USBInterrupt(void);
+void USBInterrupt(void); //USBInterrupt does not need to saves the context
+void Timer2Interrupt(void) __interrupt (INT_NO_TMR2); //Timer2Interrupt NEEDs to saves the context
+void GPIOInterrupt(void) __interrupt (INT_NO_GPIO); //GPIOInterrupt NEEDs to saves the context
 
 //unsigned char runSerialEvent;
 
@@ -45,6 +47,40 @@ void Uart0_ISR(void) __interrupt (INT_NO_UART0)
         uart0IntTxHandler();
         TI =0;
     }
+}
+
+void Uart1_ISR(void) __interrupt (INT_NO_UART1)
+{
+#if defined(CH551) || defined(CH552)
+    if (U1RI){
+        uart1IntRxHandler();
+        U1RI =0;
+    }
+    if (U1TI){
+        uart1IntTxHandler();
+        U1TI =0;
+    }
+#elif defined(CH559)
+    uint8_t interruptStatus = SER1_IIR & 0x0f;
+    switch(interruptStatus)
+    {
+        case U1_INT_RECV_RDY:
+            uart1IntRxHandler();
+            break;
+        case U1_INT_THR_EMPTY:
+            uart1IntTxHandler();
+            break;
+    }
+#elif defined(CH549)
+    if (SIF1&bU1RI){
+        uart1IntRxHandler();
+        SIF1 = bU1RI;
+    }
+    if (SIF1&bU1TI){
+        uart1IntTxHandler();
+        SIF1 = bU1TI;
+    }
+#endif
 }
 
 typedef void (*voidFuncPtr)(void);
