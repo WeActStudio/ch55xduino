@@ -1,5 +1,7 @@
 # Ch55xduino: Small Devices Arduino for ch55x devices
 
+From DeqingSun
+
 **Getting started on the Ch55x the easy way. Forked from Sduino project, also based on 
 ch554_sdcc project**
 
@@ -53,15 +55,13 @@ If you want to leave the bootloader, you may send the following bytes at 57600 b
 
 ### Driver for windows
 
-Added 2022/03/31, Please note, you can either following the Zadig instructions, or you can replace the tools in ```C:\Users\YOUR USER NAME\AppData\Local\Arduino15\packages\CH55xDuino\tools\MCS51Tools\2020.12.01\win``` with [this one](https://github.com/DeqingSun/ch55xduino/files/8390855/vnproch551_exe_20220331.zip). The newly compiled tool can use the default CH375 driver and co-exist with the offical WCHISPTool. Also it workes with 2.5.0 version of bootloader. The newly compiled tool will be de default tool in the next release.
+Since 0.0.10, if your Windows automatically installed the driver from wch.cn for the bootloader (4348,55E0), that is fine. The current upload tool can use the default CH375 driver and co-exist with the official [WCHISPTool](http://www.wch.cn/downloads/WCHISPTool_Setup_exe.html).
 
-![Zadig image](https://raw.githubusercontent.com/DeqingSun/ch55xduino/ch55xduino/docs/Zadig_bootloader_libusb.png)
+If you need to use WinUSB or libusb-win32, the tool will still work.
 
-[Zadig](https://zadig.akeo.ie/) is the recommended tool to install drivers in Windows. The bootloader (4348,55E0) should be installed with libusb-win32 driver (WinUSB driver may not work on some computer). 
+You can use USB Serial (CDC) driver for the default CDC USB stack (1209,C550). Use [Zadig](https://zadig.akeo.ie/) to install the driver if it did not install automatically.
 
 ![Zadig CDC image](https://raw.githubusercontent.com/DeqingSun/ch55xduino/ch55xduino/docs/Zadig_CDC.png)
-
-You can use USB Serial (CDC) driver for the default CDC USB stack (1209,C550). 
 
 If you tried to emulate another type of USB device without changing the PID/VID, you may need to uninstall the device before installing a new driver.
 
@@ -99,22 +99,23 @@ There is no Analog Pin definition such as A0. Just use 11, 14, 15, or 32 for the
 
 ### No polymorph functions:
 
-There is no free C++ compiler for MCS51 chip, we can not use polymorph functions. So you can not expect the compiler will choose a function according to the parameter's type. 
+There is no free C++ compiler for MCS51 chip, we can not use polymorph functions. However, since commit 13402 of SDCC, the generic selection is functional. Ch55xduino supports generic selection since 0.0.11.
 
-The biggest difference may be the ```Serial.print``` function. Here is what you should do in CH55xduino
+If you are using a version higher than 0.0.11, the print function can choose a function according to the parameter's type. 
 
-| datatype | Print on USB | Println on USB | Print on UART0 | Println on UART0 |
-|----------|--------------|----------------|----------------|------------------|
-| int      | USBSerial\_print\_i(P) | USBSerial\_println\_i(P) | Serial0\_print\_i(P) | Serial0\_println\_i(P) |
-| unsigned | USBSerial\_print\_u(P) | USBSerial\_println\_u(P) | Serial0\_print\_u(P) | Serial0\_println\_u(P) |
-| float    | USBSerial\_print\_f(P) | USBSerial\_println\_f(P) | Serial0\_print\_f(P) | Serial0\_println\_f(P) |
-| float with precision | USBSerial\_print\_f(P,Q) | USBSerial\_println\_f(P,Q) | Serial0\_print\_f(P,Q) | Serial0\_println\_f(P,Q) |
-| char     | USBSerial\_print\_c(P) | USBSerial\_println\_c(P) | Serial0\_print\_c(P) | Serial0\_println\_c(P) |
-| char * (str)  | USBSerial\_print\_s(P) | USBSerial\_println\_s(P) | Serial0\_print\_s(P) | Serial0\_println\_s(P) |
-| char array with length | USBSerial\_print\_sn(P,Q) | USBSerial\_println\_sn(P,Q) | Serial0\_print\_sn(P,Q) | Serial0\_println\_sn(P,Q) |
-| int with base | USBSerial\_print\_ub(P,Q) | USBSerial\_println\_ub(P,Q) | Serial0\_print\_ub(P,Q) | Serial0\_println\_ub(P,Q) |
+For example. If you want to print to the USB-CDC virtual serial port, you can do:
 
-They are defined in ```Arduino.h```.
+```
+USBSerial_print(val);	//val: the value to print - any data type
+USBSerial_print(val, format)	//specifies the number base (for integral data types) or number of decimal places (for floating point types)
+USBSerial_print(charPointer, length)	//specifies the string length to be printed 
+```
+
+It is also possible to do ``` USBSerial_println ```. If you want to print to Serial0 or Serial1, just use ``` Serial0_print ``` or ``` Serial1_print ```.
+
+Please note if you pass a character in single quotes, such as ```USBSerial_print(',');```, you will get ```44```. Because that char got promoted to integer type. You need to either use ```USBSerial_print((char)',');``` or ```USBSerial_print(",");```.
+
+They are defined in ```genericPrintSelection.h```.
 
 ### Memory model:
 
