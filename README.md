@@ -159,6 +159,10 @@ Most parts of the Arduino core system and some Arduino libraries are already por
 
 * SPI: Real hardware-SPI up to 12MHz.
 
+* SoftI2C: Bit-Bang I2C on any 2 pins.
+
+* WS2812: Bit-Bang WS2812 on any pin. Note some compatible LEDs have different timing and some tweak may be needed. 
+
 #### Sensors
 
 * TouchKey: Internal 6-channel capacitive touch module wrapper with an adaptive baseline algorithm.

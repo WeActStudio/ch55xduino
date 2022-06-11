@@ -89,20 +89,9 @@ fi
 
 case "$SRC" in
 	*.cpp)
-		# rename .cpp to .c and compile
-		if [ $VERBOSE -gt 0 ]; then
-			>&2 echo -e "${RED}cpp found${OFF}";
-		fi
-		CSRC="${SRC%pp}"
-		(
-			# add a reference to main to pull in main.c
-			echo "void main(void); void (*dummy_variable) () = main;"
-                	cat "$SRC"
-                ) > "$CSRC"
-#		cp -a "$SRC" "$CSRC"
-		"$SDCC" "$@" "$CSRC" -o "$OBJ"
+		# use -x c to compile as c, add a reference to main to pull in main.c
+		"$SDCC" "$@" -x c --include dummy_variable_main.h "$SRC"  -o "$OBJ"
 		ERR=$?
-		rm -f "$CSRC"
 		;;
 	*.c)
 		# compile a .c file
@@ -119,5 +108,37 @@ then
 	cp -a "${OBJ}" "${REL}"
 fi
 
+#check rel file size, if it is odd, add by 1 to align code
+if [ -f ${REL} ]; then
+    CSEG_STR="$(grep -o '^A CSEG size [0-9A-F]\+' ${REL})"
+    if [[ -z "$CSEG_STR" ]]; then
+        >&2 echo "CSEG String not found in ${REL}"
+    else
+        CSEG_HEX_VAL="$(echo ${CSEG_STR} | grep -o '[^ ]*$')"
+        CSEG_DEC_VAL="$(printf '%d' 0x${CSEG_HEX_VAL})"
+        if [ $VERBOSE -gt 0 ]; then
+            >&2 echo "CSEG of ${REL} is hex: ${CSEG_HEX_VAL}, dec:${CSEG_DEC_VAL}"
+        fi
+        if [ $((CSEG_DEC_VAL%2)) -eq 1 ]; then
+            CSEG_ADDED_HEX_VAL="$(printf '%X' $((CSEG_DEC_VAL+1)))"
+            if [ $VERBOSE -gt 0 ]; then
+                >&2 echo "Change CSEG value from ${CSEG_HEX_VAL} to ${CSEG_ADDED_HEX_VAL}"
+            fi
+            if [[ $(uname) == "Darwin" ]]; then
+                sed -i '' -e "s/${CSEG_STR}/A CSEG size ${CSEG_ADDED_HEX_VAL}/g" ${REL} # Needed for portability with sed
+            else
+                sed -i'' -e "s/${CSEG_STR}/A CSEG size ${CSEG_ADDED_HEX_VAL}/g" ${REL}
+            fi
+        fi
+    fi
+    #check if "A GSFINAL size 3" exists in main, the "ljmp __sdcc_program_startup"∂ is 3 bytes and takes GSFINAL
+    if [ -n "$(echo ${REL} | grep -c main.c)" ]; then
+        if [[ $(uname) == "Darwin" ]]; then
+            sed -i '' -e "s/A GSFINAL size 3/A GSFINAL size 4/g" ${REL} # Needed for portability with sed
+        else
+            sed -i'' -e "s/A GSFINAL size 3/A GSFINAL size 4/g" ${REL}
+        fi
+    fi
+fi
 # propagate the sdcc exit code
 exit $ERR
